@@ -15,14 +15,14 @@ DUMP_MODEL_PATH = 'lda_model.pkl'
 
 class LDA(object):
     def __init__(self, corpus, load=False, n_topic=3):
-        self.words = np.array(list(set(itertools.chain(*corpus))))
+        self.words = np.array([t[0] for t in Counter(itertools.chain(*corpus)).most_common(500)])
         X = np.array(map(self._transform, corpus))
-
+        print X
         if not load or not os.path.isfile(DUMP_MODEL_PATH):
             self._model = lda.LDA(n_topics=n_topic, random_state=0, n_iter=100)
             self._model.fit(X)
-            with open(DUMP_MODEL_PATH, 'wb') as f:
-                pickle.dump(self._model, f)
+            # with open(DUMP_MODEL_PATH, 'wb') as f:
+            #     pickle.dump(self._model, f)
         else:
             with open(DUMP_MODEL_PATH, 'rb') as f:
                 self._model = pickle.load(f)
