@@ -3,8 +3,8 @@ import numpy as np
 import cPickle as pickle
 import random
 import warnings
-from sklearn import linear_model
 
+from sklearn import linear_model
 from Utils import *
 
 # Do preprocessing for tokenize
@@ -29,6 +29,11 @@ def build_lda_model(train_set):
 
 
 def build_feature(q1, q2, lda):
+    """
+    :param q1, q2: Pre-processed questions. A dict of all required attributes
+    :param lda: Pre-trained lda model
+    :return: A 4-d array of feature
+    """
     # Title similarity
     x0 = SimilarityUtil.cosine_similarity(q1['title'], q2['title'])
     x1 = SimilarityUtil.cosine_similarity(q1['body'], q2['body'])
@@ -145,7 +150,7 @@ def load():
 
 def main():
     # load()
-    with open('final-data20.pkl', 'rb') as f:
+    with open('final-data5.pkl', 'rb') as f:
         res = pickle.load(f)
 
     res = [np.nan_to_num(a) for a in res]
@@ -153,8 +158,9 @@ def main():
     X_train, y_train, X_test_cross, y_test_cross, X_test_new, y_test_new = res
 
     # Score
-    logistic = linear_model.LogisticRegression(class_weight={0:10, 1:1})
+    logistic = linear_model.LogisticRegression(class_weight={0:1, 1:1})
     lr = logistic.fit(X_train, y_train)
+    print logistic.coef_
 
     print len(y_train), len(y_test_cross), len(y_test_new)
 
