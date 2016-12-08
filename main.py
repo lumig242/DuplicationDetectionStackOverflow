@@ -144,36 +144,25 @@ def load():
 
 
 def main():
-    load()
+    # load()
     with open('final-data20.pkl', 'rb') as f:
         res = pickle.load(f)
-
-    for a in res:
-        where_are_NaNs = np.isnan(a)
-        a[where_are_NaNs] = 1
 
     res = [np.nan_to_num(a) for a in res]
 
     X_train, y_train, X_test_cross, y_test_cross, X_test_new, y_test_new = res
 
     # Score
-    logistic = linear_model.LogisticRegression()
+    logistic = linear_model.LogisticRegression(class_weight={0:10, 1:1})
     lr = logistic.fit(X_train, y_train)
 
     print len(y_train), len(y_test_cross), len(y_test_new)
 
-    from sklearn.metrics import precision_recall_fscore_support
-    print precision_recall_fscore_support(lr.predict(X_test_cross), y_test_cross)
+    from sklearn.metrics import classification_report
+    print classification_report(lr.predict(X_test_cross), y_test_cross)
 
-    print lr.score(X_test_cross, y_test_cross)
-
-    print lr.coef_
-    # print precision_recall_fscore_support(lr.predict(X_test_new), y_test_new)
+    print classification_report(lr.predict(X_test_new), y_test_new)
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
