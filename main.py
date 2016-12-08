@@ -170,5 +170,44 @@ def main():
     print classification_report(lr.predict(X_test_new), y_test_new)
 
 
+def get_random(num, all_questions):
+    import random
+    import json
+
+    qids = all_questions.keys()
+    random.shuffle(qids)
+
+    return preprocess(all_questions[qid] for qid in qids[:1000])
+
+def main_discover_new():
+    warnings.filterwarnings("ignore")
+    with open('final-data20.pkl', 'rb') as f:
+        res = pickle.load(f)
+    with open('all_questions.pkl', 'rb') as f:
+        all = pickle.load(f)
+    print "train data loaded"
+    res = [np.nan_to_num(a) for a in res]
+
+    X_train, y_train, _, _, _, _ = res
+    logistic = linear_model.LogisticRegression(class_weight={0:1, 1:1})
+    lr = logistic.fit(X_train, y_train)
+    print "trained data ready"
+
+    with open('lda.pkl', 'rb') as f:
+        lda = pickle.load(f)
+    print "lda data loaded"
+
+    random_questions = get_random(10000, all)
+    ids = list(random_questions.keys())
+    for id_1 in ids:
+        for id_2 in ids:
+            if id_1 != id_2:
+                try:
+                    feature = build_feature(random_questions[id_1], random_questions[id_2], lda)
+                    if lr.predict(feature)[0] == 1:
+                        print id_1, id_2
+                except:
+                    pass
+
 if __name__ == '__main__':
-    main()
+    main_discover_new()
