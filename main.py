@@ -37,7 +37,7 @@ def build_feature(q1, q2, lda):
     # Title similarity
     x0 = SimilarityUtil.cosine_similarity(q1['title'], q2['title'])
     x1 = SimilarityUtil.cosine_similarity(q1['body'], q2['body'])
-    x2 = SimilarityUtil.cosine_similarity(q1['tags'], q2['tags'])
+    x2 = SimilarityUtil.jaccard_similarity(q1['tags'], q2['tags'])
     x3 = np.linalg.norm(lda.get_topic(q1['body']) - lda.get_topic(q2['body']))
     return np.array([x0, x1, x2, x3])
 
@@ -93,13 +93,13 @@ def prepare_validation_data(all_questions, train_set, test_set, lda):
     q_set_train = train_set.keys()
     q_set_test = test_set.keys()
 
-    for _ in xrange(20*size_positive_cross):
+    for _ in xrange(5*size_positive_cross):
         q1 = random.choice(q_set_train)
         q2 = random.choice(q_set_test)
         X_test_cross.append(build_feature(train_set[q1], test_set[q2], lda))
         y_test_cross.append(0 if q2 not in all_questions.get_dup(q1) else 1)
 
-    for _ in xrange(20*size_positive_new):
+    for _ in xrange(5*size_positive_new):
         q1 = random.choice(q_set_test)
         q2 = random.choice(q_set_test)
         X_test_new.append(build_feature(test_set[q1], test_set[q2], lda))
@@ -189,7 +189,7 @@ def main_discover_new():
     res = [np.nan_to_num(a) for a in res]
 
     X_train, y_train, _, _, _, _ = res
-    logistic = linear_model.LogisticRegression(class_weight={0:1, 1:1})
+    logistic = linear_model.LogisticRegression(class_weight={0:10, 1:1})
     lr = logistic.fit(X_train, y_train)
     print "trained data ready"
 
@@ -205,9 +205,11 @@ def main_discover_new():
                 try:
                     feature = build_feature(random_questions[id_1], random_questions[id_2], lda)
                     if lr.predict(feature)[0] == 1:
-                        print id_1, id_2
+                        print 'http://stackoverflow.com/questions/' + id_1, 'http://stackoverflow.com/questions/' + id_2
                 except:
                     pass
 
 if __name__ == '__main__':
+    load()
+    main()
     main_discover_new()

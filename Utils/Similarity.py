@@ -12,7 +12,8 @@ class _SimilarityUtil(object):
         :param text1, text2: list of tokens
         :return: float
         """
-        return 1.0 - nltk.jaccard_distance(set(text1), set(text2))
+        _s1, _s2 = set(text1), set(text2)
+        return 1.0 - float(len(_s1 & _s2)) / len(_s1 | _s2)
 
     @staticmethod
     def _inverse(tokens):
