@@ -11,7 +11,7 @@
 	
 3. The nbviewer link that you submitted to the google form
 	
-	
+	http://nbviewer.jupyter.org/github/lumig242/DuplicationDetectionStackOverflow/blob/master/deliverable/finalReport.ipynb
 		
 4. Links to any large files that were not submitted directly to Autolab (e.g. data files)
 
