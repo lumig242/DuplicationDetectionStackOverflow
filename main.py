@@ -160,7 +160,6 @@ def main():
     # Score
     logistic = linear_model.LogisticRegression(class_weight={0:1, 1:1})
     lr = logistic.fit(X_train, y_train)
-    print logistic.coef_
 
     print len(y_train), len(y_test_cross), len(y_test_new)
 
@@ -178,6 +177,7 @@ def get_random(num, all_questions):
     random.shuffle(qids)
 
     return preprocess(all_questions[qid] for qid in qids[:1000])
+
 
 def main_discover_new():
     warnings.filterwarnings("ignore")
